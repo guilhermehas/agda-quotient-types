@@ -14,7 +14,16 @@
 \usepackage{newunicodechar}
 \newunicodechar{∀}{\ensuremath{\mathnormal{\forall}}}
 \newunicodechar{→}{\ensuremath{\mathnormal{\to}}}
+\newunicodechar{≡}{\ensuremath{\mathnormal{\equiv}}}
+\newunicodechar{ℓ}{\ensuremath{\mathnormal{\ell}}}
+\newunicodechar{∣}{\ensuremath{\mathnormal{\|}}}
+\newunicodechar{∥}{\ensuremath{\mathnormal{\||}}}
+\newunicodechar{₀}{\ensuremath{{}_0}}
 \newunicodechar{₁}{\ensuremath{{}_1}}
+\newunicodechar{₂}{\ensuremath{{}_2}}
+\newunicodechar{ℚ}{\ensuremath{\mathnormal{\mathbb{Q}}}}
+\newunicodechar{ℤ}{\ensuremath{\mathnormal{\mathbb{Z}}}}
+\newunicodechar{×}{\ensuremath{\mathnormal{\times}}}
 
 % Support for Greek letters.
 \usepackage{alphabeta}
@@ -24,28 +33,158 @@
 \usepackage{microtype}
 \DisableLigatures[-]{encoding=T1}
 
+%Information to be included in the title page:
+\title{Using quotient types in Agda}
+\author{Guilherme Silva}
+\date{2021}
+
+
 \begin{document}
 
+\frame{\titlepage}
+
 \begin{frame}
-  Some code:
-  \begin{code}
-  {-# OPTIONS --without-K #-}
+  \frametitle{Motivation}
+  In a simple type theory without quotient types,
+  it is not possible to have two distinct elements and after
+  making them equal.
 
-  open import Agda.Builtin.String
-
-  -- A comment with some TeX ligatures:
-  -- --, ---, ?`, !`, `, ``, ', '', <<, >>.
-
-  Θ₁ : Set → Set
-  Θ₁ = λ A → A
-
-  a-name-with--hyphens : ∀ {A : Set} → A → A
-  a-name-with--hyphens ff--fl = ff--fl
-
-  ffi : String
-  ffi = "--"
-  \end{code}
-  Note that the code is indented.
+  With them, it is now possible.
+  One of the best examples is making $ \frac{1}{2} $ and $ \frac{2}{4} $ be equal elements.
 \end{frame}
+
+\begin{frame}
+  \frametitle{Imports}
+  \begin{code}
+  {-# OPTIONS --cubical #-}
+
+  open import Cubical.Foundations.Prelude hiding (isProp; isSet)
+  open import Cubical.Relation.Nullary using (¬_)
+
+  open import Cubical.Data.Unit
+  open import Cubical.Data.Bool
+  open import Cubical.Data.Int
+
+  private variable
+    ℓ ℓ₁ : Level
+    A : Set ℓ
+    B : Set ℓ₁
+    x y z : A
+  \end{code}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Equalities}
+  In cubical type theory, equality is a function between an interval to a set.
+  \begin{code}
+  tt≡tt : tt ≡ tt
+  tt≡tt i = tt
+
+  refl' : (x : A) → x ≡ x
+  refl' x i = x
+  \end{code}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Equalities}
+  It is also possible to invert the path of the equality.
+  If the interval i goes from i0 to i1, the interval \~{} i goes from i1 to i0.
+
+  \begin{code}
+  sym' : x ≡ y → y ≡ x
+  sym' p i = p (~ i)
+
+  ext : (f g : A → B) → (∀ x → f x ≡ g x) → f ≡ g
+  ext f g p i x = -- wants that when i = i0, f x
+                  --        and when i = i1, g x
+                  p x -- is the same of (f x ≡ g x)
+                  i
+  \end{code}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{The simplest example of quotient types}
+  This is an example when two elements of the same data types are equal:
+  \begin{code}
+  data Bool≡ : Set where
+    true false : Bool≡
+    t≡f : true ≡ false
+  \end{code}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Functions of quotient types}
+  Let a function f between elements of Bool≡ and another set, \\
+  if $ x \equiv y $, then $ f(x) \equiv f(y) $.
+  In this case, $ x $ is true, $ y $ is false and $ f(x) $ is tt.
+  \begin{code}
+  f : Bool≡ → Unit
+  f true    = tt
+  f false   = tt
+  f (t≡f i) = refl i -- proving that f true ≡ f false
+  \end{code}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Truncation type}
+
+  In trucation type, every element of it is equal.
+  With that, we can define Bool≡ as ∥ Bool ∥.
+
+  \begin{code}
+  data ∥_∥ {ℓ} (A : Set ℓ) : Set ℓ where
+    ∣_∣ : A → ∥ A ∥
+    squash : ∀ (x y : ∥ A ∥) → x ≡ y
+
+  Bool≡' = ∥ Bool ∥
+  \end{code}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Not all equalities are the same}
+  In cubical type theory, the equalities are not always the same.
+  In this example, the circle is isomorphic (the same) to the integers:
+  \begin{code}
+  data Circle : Type where
+    base : Circle
+    loop : base ≡ base
+  \end{code}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Making equalities equal}
+  To make the equality equal, it is necessary to give the information in the data type that it is a set:
+  \begin{code}
+  isProp : Type ℓ → Type ℓ
+  isProp A = (x y : A) → x ≡ y
+
+  isSet : Type ℓ → Type ℓ
+  isSet A = (x y : A) → isProp (x ≡ y)
+  \end{code}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Rational Numbers}
+  The rational numbers are defined giving the numerator and a denominator different from zero.
+  Two rational numbers $ \frac{p₁}{q₁} $ and $ \frac{p₂}{q₂} $ are equal when $ p₁ \times q₂ \equiv p₂ \times q₁ $
+  \begin{code}
+  data ℚ : Type where
+    _/_[_] : (p : ℤ) (q : ℤ) → ¬ (q ≡ pos 0) → ℚ
+    path : ∀ p₁ q₁ p₂ q₂ {pr₁ pr₂} → (p₁ · q₂) ≡ (p₂ · q₁)
+      → p₁ / q₁ [ pr₁ ] ≡ p₂ / q₂ [ pr₂ ]
+    trunc : isSet ℚ
+  \end{code}
+\end{frame}
+
+\begin{frame}
+  \vspace*{36 pt}
+  \begin{center}
+  {\Huge Any questions?}
+  \end{center}
+\end{frame}
+
 
 \end{document}

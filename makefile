@@ -15,5 +15,11 @@ install:
 	cp latex/$(PRESENTATION).pdf $(out)/$(PRESENTATION).pdf
 
 clean:
-	rm -f *.out
 	rm -rf latex
+
+distclean: clean
+	rm -f *.agdai
+	rm -f _region_.tex
+	rm -rf .auctex-auto
+	rm -f *.log
+	rm -f result
