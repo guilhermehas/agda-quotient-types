@@ -7,5 +7,5 @@ It is the slides explaing cubical agda quotient types
 Just install Nix and run it to build:
 
 ``` sh
-    nix build github:guilhermehas/agda-quotient-types
+nix build github:guilhermehas/agda-quotient-types
 ```
