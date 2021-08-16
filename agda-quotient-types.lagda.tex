@@ -18,6 +18,8 @@
 \newunicodechar{ℓ}{\ensuremath{\mathnormal{\ell}}}
 \newunicodechar{∣}{\ensuremath{\mathnormal{\|}}}
 \newunicodechar{∥}{\ensuremath{\mathnormal{\||}}}
+\newunicodechar{∙}{\ensuremath{\mathnormal{\cdot}}}
+\newunicodechar{≠}{\ensuremath{\mathnormal{\neq}}}
 \newunicodechar{₀}{\ensuremath{{}_0}}
 \newunicodechar{₁}{\ensuremath{{}_1}}
 \newunicodechar{₂}{\ensuremath{{}_2}}
@@ -34,6 +36,13 @@
 % entire document!
 \usepackage{microtype}
 \DisableLigatures[-]{encoding=T1}
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
 
 %Information to be included in the title page:
 \title{Using quotient types in Agda}
@@ -69,10 +78,10 @@
   open import Cubical.Data.Nat hiding (_·_)
 
   private variable
-    ℓ ℓ₁ : Level
+    ℓ : Level
     A : Set ℓ
-    B : Set ℓ₁
-    x y z : A
+    x y : A
+  _≠_ = λ {A : Set} (x y : A) → ¬ x ≡ y
   \end{code}
 \end{frame}
 
@@ -125,6 +134,8 @@
   data Circle : Type where
     base : Circle
     loop : base ≡ base
+
+  notEqual = loop ∙ loop ≠ loop
   \end{code}
 \end{frame}
 
