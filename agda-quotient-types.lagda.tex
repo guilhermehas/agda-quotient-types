@@ -90,24 +90,6 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Equalities}
-  It is also possible to invert the path of equality.
-  If the interval i goes from i0 to i1, the interval \~{} i goes from i1 to i0.
-
-  \begin{code}
-  sym' : x ≡ y → y ≡ x
-  sym' p i = p (~ i)
-
-  ext : (f g : A → B) → (∀ x → f x ≡ g x) → f ≡ g
-  ext f g p i x = -- wants that when i = i0, f x
-                  --        and when i = i1, g x
-                  p x -- is the same of (f x ≡ g x)
-                  i
-  \end{code}
-
-\end{frame}
-
-\begin{frame}
   \frametitle{The simplest example of quotient types}
   This is an example when two elements of the same data types are equal:
   \begin{code}
@@ -133,21 +115,6 @@
 
   \end{code}
 
-\end{frame}
-
-\begin{frame}
-  \frametitle{Truncation type}
-
-  In truncation type, every element of it is equal.
-  Therefore we can define Bool≡ as ∥ Bool ∥.
-
-  \begin{code}
-  data ∥_∥ {ℓ} (A : Set ℓ) : Set ℓ where
-    ∣_∣ : A → ∥ A ∥
-    squash : ∀ (x y : ∥ A ∥) → x ≡ y
-
-  Bool≡' = ∥ Bool ∥
-  \end{code}
 \end{frame}
 
 \begin{frame}
@@ -187,39 +154,6 @@
   _ : ∀ {pr₁ : ¬ (2 ≡ pos 0)} {pr₂ : ¬ (4 ≡ pos 0)}
     → 1 / 2 [ pr₁ ] ≡ 2 / 4 [ pr₂ ]
   _ = path 1 2 2 4 refl
-  \end{code}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Integers}
-  Another way to define integers is making the positive and negative zero equals.
-  \begin{code}
-  data ℤ' : Type where
-    pos' : ℕ → ℤ'
-    neg' : ℕ → ℤ'
-    0+-≡ : pos' 0 ≡ neg' 0
-  \end{code}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Sets}
-  One way of defining sets is to create a list where you can swap elements and remove them when they are equal.
-  \begin{code}
-  infixr 20 _∷_
-  data LFSet (A : Type ℓ) : Type ℓ where
-    []    : LFSet A
-    _∷_   : (x : A) → (xs : LFSet A) → LFSet A
-    dup   : ∀ x xs   → x ∷ x ∷ xs ≡ x ∷ xs
-    comm  : ∀ x y xs → x ∷ y ∷ xs ≡ y ∷ x ∷ xs
-    trunc : isSet (LFSet A)
-
-  _ : tt ∷ tt ∷ [] ≡ tt ∷ []
-  _ = dup tt []
-
-  _ : let true∷false : LFSet Bool
-          true∷false = true ∷ false ∷ []
-      in true∷false ≡ false ∷ true ∷ []
-  _ = comm true false []
   \end{code}
 \end{frame}
 
