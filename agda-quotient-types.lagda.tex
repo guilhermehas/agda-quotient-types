@@ -38,7 +38,8 @@
 %Information to be included in the title page:
 \title{Using quotient types in Agda}
 \author{Guilherme Silva}
-\date{2021}
+\institute{Scottish Programming Languages and Verification Summer School}
+\date{17th August 2021}
 
 
 \begin{document}
@@ -47,11 +48,10 @@
 
 \begin{frame}
   \frametitle{Motivation}
-  In a simple type theory without quotient types,
-  it is not possible to have two distinct elements and after
-  making them equal.
+  In simple type theories with quotient types,
+  it is possible to create two distinct elements and after
+  make them equal.
 
-  With them, it is now possible.
   One of the best examples is making $ \frac{1}{2} $ and $ \frac{2}{4} $ be equal elements.
 \end{frame}
 
@@ -78,7 +78,7 @@
 
 \begin{frame}
   \frametitle{Equalities}
-  In cubical type theory, equality is a function between an interval to a set.
+  In cubical type theory, equality is a function between from an interval to a set.
   \begin{code}
   tt≡tt : tt ≡ tt
   tt≡tt i = tt
@@ -139,7 +139,7 @@
   \frametitle{Truncation type}
 
   In truncation type, every element of it is equal.
-  With that, we can define Bool≡ as ∥ Bool ∥.
+  Therefore we can define Bool≡ as ∥ Bool ∥.
 
   \begin{code}
   data ∥_∥ {ℓ} (A : Set ℓ) : Set ℓ where
@@ -163,7 +163,7 @@
 
 \begin{frame}
   \frametitle{Making equalities equal}
-  To make the equality equal, it is necessary to give the information in the data type that it is a set:
+  To make the equality equal, it is necessary when declaring a data type to state that it is a set.
   \begin{code}
   isProp : Type ℓ → Type ℓ
   isProp A = (x y : A) → x ≡ y
@@ -175,7 +175,7 @@
 
 \begin{frame}
   \frametitle{Rational Numbers}
-  The rational numbers are defined giving the numerator and a denominator different from zero.
+  Rational numbers are defined by numerator and a denominator different from zero.
   Two rational numbers $ \frac{p₁}{q₁} $ and $ \frac{p₂}{q₂} $ are equal when $ p₁ \times q₂ \equiv p₂ \times q₁ $
   \begin{code}
   data ℚ : Type where
@@ -203,7 +203,7 @@
 
 \begin{frame}
   \frametitle{Sets}
-  One way of defining sets is to create a list where you can swap elements and remove when they are equal.
+  One way of defining sets is to create a list where you can swap elements and remove them when they are equal.
   \begin{code}
   infixr 20 _∷_
   data LFSet (A : Type ℓ) : Type ℓ where
@@ -226,7 +226,7 @@
 \begin{frame}
   \vspace*{36 pt}
   \begin{center}
-  {\Huge Any questions?}
+  {\Huge Questions?}
   \end{center}
 \end{frame}
 
