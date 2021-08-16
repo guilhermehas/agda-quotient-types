@@ -23,7 +23,9 @@
 \newunicodechar{₂}{\ensuremath{{}_2}}
 \newunicodechar{ℚ}{\ensuremath{\mathnormal{\mathbb{Q}}}}
 \newunicodechar{ℤ}{\ensuremath{\mathnormal{\mathbb{Z}}}}
+\newunicodechar{ℕ}{\ensuremath{\mathnormal{\mathbb{N}}}}
 \newunicodechar{×}{\ensuremath{\mathnormal{\times}}}
+\newunicodechar{∷}{\ensuremath{::}}
 
 % Support for Greek letters.
 \usepackage{alphabeta}
@@ -64,6 +66,7 @@
   open import Cubical.Data.Unit
   open import Cubical.Data.Bool
   open import Cubical.Data.Int
+  open import Cubical.Data.Nat hiding (_·_)
 
   private variable
     ℓ ℓ₁ : Level
@@ -111,6 +114,9 @@
   data Bool≡ : Set where
     true false : Bool≡
     t≡f : true ≡ false
+
+  _ : true ≡ false
+  _ = t≡f
   \end{code}
 \end{frame}
 
@@ -124,6 +130,7 @@
   f true    = tt
   f false   = tt
   f (t≡f i) = refl i -- proving that f true ≡ f false
+
   \end{code}
 
 \end{frame}
@@ -176,6 +183,43 @@
     path : ∀ p₁ q₁ p₂ q₂ {pr₁ pr₂} → (p₁ · q₂) ≡ (p₂ · q₁)
       → p₁ / q₁ [ pr₁ ] ≡ p₂ / q₂ [ pr₂ ]
     trunc : isSet ℚ
+
+  _ : ∀ {pr₁ : ¬ (2 ≡ pos 0)} {pr₂ : ¬ (4 ≡ pos 0)}
+    → 1 / 2 [ pr₁ ] ≡ 2 / 4 [ pr₂ ]
+  _ = path 1 2 2 4 refl
+  \end{code}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Integers}
+  Another way to define integers is making the positive and negative zero equals.
+  \begin{code}
+  data ℤ' : Type where
+    pos' : ℕ → ℤ'
+    neg' : ℕ → ℤ'
+    0+-≡ : pos' 0 ≡ neg' 0
+  \end{code}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Sets}
+  One way of defining sets is to create a list where you can swap elements and remove when they are equal.
+  \begin{code}
+  infixr 20 _∷_
+  data LFSet (A : Type ℓ) : Type ℓ where
+    []    : LFSet A
+    _∷_   : (x : A) → (xs : LFSet A) → LFSet A
+    dup   : ∀ x xs   → x ∷ x ∷ xs ≡ x ∷ xs
+    comm  : ∀ x y xs → x ∷ y ∷ xs ≡ y ∷ x ∷ xs
+    trunc : isSet (LFSet A)
+
+  _ : tt ∷ tt ∷ [] ≡ tt ∷ []
+  _ = dup tt []
+
+  _ : let true∷false : LFSet Bool
+          true∷false = true ∷ false ∷ []
+      in true∷false ≡ false ∷ true ∷ []
+  _ = comm true false []
   \end{code}
 \end{frame}
 
